@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Blume — Dish Detail</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Bebas+Neue&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="nav">
+  <a href="index.html" class="logo">BLUME<span>.</span></a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="index.html#menu">Menu</a></li>
+    <li><a href="index.html#about">About</a></li>
+    <li><a href="auth.html" class="nav-auth-link">Sign In</a></li>
+    <li>
+      <div class="nav-user-menu" style="display:none">
+        <a href="profile.html" class="nav-user-name">Guest</a>
+        <span class="nav-sep">|</span>
+        <a href="#" onclick="Auth.logout()">Logout</a>
+      </div>
+    </li>
+    <li>
+      <a href="order.html" class="nav-cart">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+        <span class="cart-badge" style="display:none">0</span>
+      </a>
+    </li>
+    <li><a href="index.html#res" class="nav-cta">Reserve Table</a></li>
+  </ul>
+  <div class="mob-right">
+    <a href="order.html" class="mob-cart">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+      <span class="cart-badge" style="display:none">0</span>
+    </a>
+    <button class="hamburger" id="hbg" aria-label="Menu"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+
+<div class="mob-menu" id="mobMenu">
+  <ul>
+    <li><a href="index.html" onclick="cMob()">Home</a></li>
+    <li><a href="index.html#menu" onclick="cMob()">Menu</a></li>
+    <li><a href="order.html" onclick="cMob()">My Order</a></li>
+    <li id="mob-auth-link"><a href="auth.html" onclick="cMob()">Sign In</a></li>
+    <li id="mob-profile-link" style="display:none"><a href="profile.html" onclick="cMob()">My Profile</a></li>
+  </ul>
+</div>
+
+<!-- ITEM DETAIL -->
+<main class="item-page" id="itemPage">
+  <div class="item-loading">Loading...</div>
+</main>
+
+<!-- RELATED ITEMS -->
+<section class="related-sec" id="relatedSec" style="display:none">
+  <div class="related-inner">
+    <div class="sec-hdr" style="text-align:left;margin-bottom:32px">
+      <div class="slabel"><span>You May Also Like</span></div>
+      <h2 style="font-family:'Playfair Display',serif;font-size:clamp(1.6rem,3vw,2.4rem);font-weight:900">More from Our <em>Kitchen</em></h2>
+    </div>
+    <div class="mgrid" id="relatedGrid"></div>
+  </div>
+</section>
+
+<footer>
+  <div class="fbot" style="border-top:none">
+    <p>© 2025 Blume Restaurant. All rights reserved.</p>
+    <a href="index.html" style="color:var(--y);font-size:.73rem;letter-spacing:.1em;text-decoration:none">Back to Home</a>
+  </div>
+</footer>
+
+<div class="toast" id="toast">Added to order!</div>
+
+<script src="data.js"></script>
+<script>
+
+const params = new URLSearchParams(window.location.search);
+const itemId = params.get('id');
+let currentItem = null;
+let qty = 1;
+
+async function loadItem() {
+  try {
+    const res  = await fetch(`${API_BASE}/api/menu/${itemId}`);
+    const item = await res.json();
+
+    if (!item || item.error) {
+      document.getElementById('itemPage').innerHTML = `
+        <div style="text-align:center;padding:120px 20px">
+          <h2 style="font-family:'Playfair Display',serif;font-size:2rem;margin-bottom:16px">Dish Not Found</h2>
+          <a href="index.html#menu" class="btn-y">Back to Menu</a>
+        </div>`;
+      return;
+    }
+
+    currentItem = item;
+    document.title = `Blume — ${item.name}`;
+
+    document.getElementById('itemPage').innerHTML = `
+      <div class="item-hero">
+        <div class="item-gallery">
+          <img src="${item.img}" alt="${item.name}" class="item-main-img" id="mainImg"/>
+          <div class="item-thumbs">
+            ${item.gallery.map((g,i) => `
+              <img src="${g}" alt="View ${i+1}"
+                   class="item-thumb ${i===0?'active':''}"
+                   onclick="switchImg(this,'${g}')"/>
+            `).join('')}
+          </div>
+        </div>
+        <div class="item-info">
+          <a href="index.html#menu" class="item-back">Back to Menu</a>
+          <div class="mcard-tag" style="margin-bottom:12px">${item.tag}</div>
+          <h1 class="item-title">${item.name}</h1>
+          <div class="item-meta">
+            <span>Prep: ${item.prepTime}</span>
+            <span>${item.calories} kcal</span>
+            <span>${item.chef}</span>
+          </div>
+          <p class="item-desc">${item.longDesc}</p>
+
+          <div class="item-section">
+            <h4>Ingredients</h4>
+            <div class="item-tags">
+              ${item.ingredients.map(ing => `<span class="itag">${ing}</span>`).join('')}
+            </div>
+          </div>
+
+          <div class="item-section">
+            <h4>Allergens</h4>
+            <div class="item-tags">
+              ${item.allergens.length && item.allergens[0] !== 'None'
+                ? item.allergens.map(a => `<span class="itag itag-warn">${a}</span>`).join('')
+                : '<span class="itag itag-ok">No Major Allergens</span>'
+              }
+            </div>
+          </div>
+
+          <div class="item-section">
+            <h4>Wine Pairing</h4>
+            <p class="item-pairing">${item.pairing}</p>
+          </div>
+
+          <div class="item-order-row">
+            <div class="item-price">$${item.price}</div>
+            <div class="item-qty-ctrl">
+              <button onclick="changeQty(-1)">−</button>
+              <span id="qtyDisplay">1</span>
+              <button onclick="changeQty(1)">+</button>
+            </div>
+            <button class="btn-y item-add-btn" onclick="addToCart()">Add to Order</button>
+          </div>
+        </div>
+      </div>`;
+
+    const relRes   = await fetch(`${API_BASE}/api/menu`);
+    const allItems = await relRes.json();
+    const related  = allItems.filter(m => m._id !== item._id).slice(0, 3);
+
+    document.getElementById('relatedSec').style.display = 'block';
+    document.getElementById('relatedGrid').innerHTML = related.map(m => `
+      <div class="mcard" onclick="window.location='Item.html?id=${m._id}'" style="cursor:pointer">
+        <img class="mcard-img" src="${m.img}" alt="${m.name}" loading="lazy"/>
+        <div class="mcard-body">
+          <div class="mcard-tag">${m.tag}</div>
+          <h3>${m.name}</h3>
+          <p>${m.desc}</p>
+          <div class="mcard-foot">
+            <div class="mprice">$${m.price}</div>
+            <div class="morder">View Details</div>
+          </div>
+        </div>
+      </div>`).join('');
+
+  } catch (err) {
+    console.error('Item load error:', err);
+    document.getElementById('itemPage').innerHTML = `
+      <div style="text-align:center;padding:120px 20px">
+        <h2 style="font-family:'Playfair Display',serif;font-size:2rem;margin-bottom:16px">Could not load item</h2>
+        <p style="color:#888;margin-bottom:24px">Could not connect to server. Please try again later.</p>
+        <a href="index.html#menu" class="btn-y">Back to Menu</a>
+      </div>`;
+  }
+}
+
+function changeQty(d) {
+  qty = Math.max(1, qty + d);
+  document.getElementById('qtyDisplay').textContent = qty;
+}
+
+function addToCart() {
+  if (!currentItem) return;
+  Cart.add(currentItem._id, qty);
+  showToast(`${currentItem.name} added to order!`);
+}
+
+function switchImg(el, src) {
+  document.getElementById('mainImg').src = src;
+  document.querySelectorAll('.item-thumb').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+window.addEventListener('scroll', () =>
+  document.getElementById('nav').classList.toggle('scrolled', scrollY > 60)
+);
+
+const hbg = document.getElementById('hbg');
+const mob = document.getElementById('mobMenu');
+hbg.addEventListener('click', () => {
+  hbg.classList.toggle('open');
+  mob.classList.toggle('open');
+});
+function cMob() {
+  hbg.classList.remove('open');
+  mob.classList.remove('open');
+}
+
+Auth.updateNav();
+Cart.updateBadge();
+loadItem();
+
+const user = Auth.get();
+if (user) {
+  const al = document.getElementById('mob-auth-link');
+  const pl = document.getElementById('mob-profile-link');
+  if (al) al.style.display = 'none';
+  if (pl) pl.style.display = '';
+}
+</script>
+</body>
+</html>

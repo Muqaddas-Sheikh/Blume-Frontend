@@ -1,0 +1,318 @@
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Blume Restaurant</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Bebas+Neue&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="nav">
+  <a href="index.html" class="logo">BLUME<span>.</span></a>
+
+  <!-- Desktop links -->
+  <ul class="nav-links">
+    <li><a href="#home">Home</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#menu">Menu</a></li>
+    <li><a href="#gallery">Gallery</a></li>
+    <li><a href="#testi">Reviews</a></li>
+    <li><a href="auth.html" class="nav-auth-link">Sign In</a></li>
+    <li>
+      <div class="nav-user-menu" style="display:none">
+        <a href="profile.html" class="nav-user-name">Guest</a>
+        <span class="nav-sep">|</span>
+        <a href="#" onclick="Auth.logout()">Logout</a>
+      </div>
+    </li>
+    <li><a href="order.html" class="nav-cart">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+      <span class="cart-badge" style="display:none">0</span>
+    </a></li>
+    <li><a href="#res" class="nav-cta">Reserve Table</a></li>
+  </ul>
+
+  <!-- MOBILE RIGHT SIDE: logo left, yeh right side pe -->
+  <div class="mob-right">
+    <a href="order.html" class="mob-cart">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+      <span class="cart-badge" style="display:none">0</span>
+    </a>
+    <a href="#res" class="mob-reserve-btn">Reserve</a>
+    <!-- ✅ FIX: 3 span tags zaroori hain hamburger lines ke liye -->
+    <button class="hamburger" id="hbg">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- MOBILE MENU -->
+<div class="mob-menu" id="mobMenu">
+  <ul>
+    <li><a href="#home" onclick="cMob()">Home</a></li>
+    <li><a href="#about" onclick="cMob()">About</a></li>
+    <li><a href="#menu" onclick="cMob()">Menu</a></li>
+    <li><a href="#gallery" onclick="cMob()">Gallery</a></li>
+    <li><a href="#testi" onclick="cMob()">Reviews</a></li>
+    <li id="mob-auth-link"><a href="auth.html" onclick="cMob()">Sign In</a></li>
+    <li id="mob-profile-link" style="display:none"><a href="profile.html" onclick="cMob()">My Profile</a></li>
+    <li><a href="#res" onclick="cMob()">Reserve</a></li>
+  </ul>
+</div>
+<div class="mob-overlay" id="mobOverlay" onclick="cMob()"></div>
+
+<!-- HERO -->
+<section class="hero" id="home">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-content">
+    <h1>Where Food<br>Becomes <em>Art</em></h1>
+    <p>Experience an extraordinary culinary journey crafted with the finest ingredients, bold flavors, and an atmosphere that lingers long after the last bite.</p>
+    <div class="hero-btns">
+      <a href="#menu" class="btn-y">Explore Menu</a>
+      <a href="#res"  class="btn-o">Book a Table</a>
+    </div>
+  </div>
+  <div class="hero-scroll"><div class="sline"></div>Scroll to Discover</div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee">
+  <div class="mtrack">
+    <span>Fine Dining</span><span class="mdot">&#x2022;</span>
+    <span>Chef's Table</span><span class="mdot">&#x2022;</span>
+    <span>Craft Cocktails</span><span class="mdot">&#x2022;</span>
+    <span>Private Events</span><span class="mdot">&#x2022;</span>
+    <span>Seasonal Menus</span><span class="mdot">&#x2022;</span>
+    <span>Award Winning</span><span class="mdot">&#x2022;</span>
+    <span>Fine Dining</span><span class="mdot">&#x2022;</span>
+    <span>Chef's Table</span><span class="mdot">&#x2022;</span>
+    <span>Craft Cocktails</span><span class="mdot">&#x2022;</span>
+    <span>Private Events</span><span class="mdot">&#x2022;</span>
+    <span>Seasonal Menus</span><span class="mdot">&#x2022;</span>
+    <span>Award Winning</span><span class="mdot">&#x2022;</span>
+  </div>
+</div>
+
+<!-- ABOUT -->
+<section class="about" id="about">
+  <div class="about-imgs reveal">
+    <img class="aimg1" src="https://images.unsplash.com/photo-1559339352-11d035aa65de?w=800&q=80" alt="Chef plating"/>
+    <img class="aimg2" src="https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?w=600&q=80" alt="Interior"/>
+    <div class="abadge"><strong>15+</strong><span>Years of Excellence</span></div>
+  </div>
+  <div class="reveal rd1">
+    <div class="slabel"><span>Our Story</span></div>
+    <h2>Passion on Every <em>Plate</em></h2>
+    <p>Blume Restaurant was born from a single belief — that great food creates unforgettable moments. Our chefs draw from global culinary traditions while honoring locally sourced, seasonal ingredients.</p>
+    <p>Every dish is a conversation between technique and soul, precision and spontaneity. We don't just cook food — we craft experiences.</p>
+    <div class="stats">
+      <div class="stat"><div class="snum">200+</div><div class="slbl">Menu Items</div></div>
+      <div class="stat"><div class="snum">50K+</div><div class="slbl">Happy Guests</div></div>
+      <div class="stat"><div class="snum">12</div><div class="slbl">Awards Won</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- MENU -->
+<section class="menu-sec" id="menu">
+  <div class="sec-hdr reveal">
+    <div class="slabel"><span>Culinary Creations</span></div>
+    <h2>Our Signature <em>Menu</em></h2>
+  </div>
+  <div class="mtabs reveal rd1">
+    <button class="mtab active" onclick="fMenu('all',this)">All</button>
+    <button class="mtab" onclick="fMenu('starter',this)">Starters</button>
+    <button class="mtab" onclick="fMenu('main',this)">Mains</button>
+    <button class="mtab" onclick="fMenu('dessert',this)">Desserts</button>
+  </div>
+  <div class="mgrid" id="mgrid"></div>
+</section>
+
+<!-- EXPERIENCE -->
+<section class="exp" id="exp">
+  <div class="exp-inner reveal">
+    <div class="slabel" style="justify-content:center"><span>The Blume Experience</span></div>
+    <h2>More Than a <em>Meal</em></h2>
+    <p>From intimate dinners to grand celebrations, every detail — from the lighting to the last dessert — is meticulously curated for you.</p>
+    <a href="#res" class="btn-y">Plan Your Visit</a>
+    <div class="feat-row">
+      <div class="feat">
+        <h4>Private Dining</h4>
+        <p>Exclusive rooms for up to 30 guests. Perfect for celebrations, corporate dinners, or intimate gatherings.</p>
+      </div>
+      <div class="feat">
+        <h4>Chef's Table</h4>
+        <p>Sit front and center and watch our head chef orchestrate each course in a live culinary performance.</p>
+      </div>
+      <div class="feat">
+        <h4>Sommelier Service</h4>
+        <p>Our expert sommelier guides you through 400+ curated wines from across the globe.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- GALLERY -->
+<section class="gallery" id="gallery">
+  <div class="sec-hdr reveal" style="text-align:left">
+    <div class="slabel"><span>Gallery</span></div>
+    <h2>A Feast <em>for the Eyes</em></h2>
+  </div>
+  <div class="ggrid reveal rd1">
+    <div class="gi"><img src="https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=800&q=80" alt="Dish"/><div class="gov"><span>Seasonal Signature</span></div></div>
+    <div class="gi"><img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600&q=80" alt="Dish"/><div class="gov"><span>Chef's Special</span></div></div>
+    <div class="gi"><img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=600&q=80" alt="Restaurant"/><div class="gov"><span>The Dining Room</span></div></div>
+    <div class="gi"><img src="https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=600&q=80" alt="Dish"/><div class="gov"><span>Artisan Desserts</span></div></div>
+    <div class="gi"><img src="https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=800&q=80" alt="Dish"/><div class="gov"><span>Tasting Menu</span></div></div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testi" id="testi">
+  <div class="sec-hdr reveal">
+    <div class="slabel"><span>Guest Reviews</span></div>
+    <h2>What Our Guests <em>Say</em></h2>
+  </div>
+  <div class="tgrid">
+    <div class="tcard reveal">
+      <div class="tstars">★★★★★</div>
+      <p class="ttext">"Blume redefined fine dining for me. Every plate was a masterpiece — visually stunning and completely delicious. An experience I'll cherish forever."</p>
+      <div class="tauthor">
+        <img class="tavatar" src="https://randomuser.me/api/portraits/women/44.jpg" alt="Sarah M."/>
+        <div><div class="tname">Sarah M.</div><div class="trole">Food Critic, NYC</div></div>
+      </div>
+    </div>
+    <div class="tcard reveal rd1">
+      <div class="tstars">★★★★★</div>
+      <p class="ttext">"The Chef's Table was unlike anything I've experienced. Watching the kitchen while savoring each course was pure magic. Worth every penny."</p>
+      <div class="tauthor">
+        <img class="tavatar" src="https://randomuser.me/api/portraits/men/32.jpg" alt="James L."/>
+        <div><div class="tname">James L.</div><div class="trole">Culinary Enthusiast</div></div>
+      </div>
+    </div>
+    <div class="tcard reveal rd2">
+      <div class="tstars">★★★★★</div>
+      <p class="ttext">"We hosted our anniversary dinner here and the private room was breathtaking. The staff went above and beyond to make our night perfect."</p>
+      <div class="tauthor">
+        <img class="tavatar" src="https://randomuser.me/api/portraits/women/68.jpg" alt="Aisha R."/>
+        <div><div class="tname">Aisha R.</div><div class="trole">Regular Guest</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- RESERVATION -->
+<section class="res" id="res">
+  <div class="res-inner">
+    <div class="reveal">
+      <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px">
+        <div style="width:36px;height:2px;background:rgba(0,0,0,.3)"></div>
+        <span style="color:rgba(0,0,0,.5);font-size:.68rem;letter-spacing:.3em;text-transform:uppercase;font-weight:600">Book a Table</span>
+      </div>
+      <h2>Reserve Your <em>Evening</em></h2>
+      <p class="res-sub">Secure your table and let us take care of the rest. For parties larger than 10, please call us directly.</p>
+      <div class="rinfo">
+        <div class="rrow"><div class="rlabel">Hours</div><div class="rval">Mon – Fri: 12:00 PM – 10:00 PM<br>Sat – Sun: 11:00 AM – 11:00 PM</div></div>
+        <div class="rrow"><div class="rlabel">Location</div><div class="rval">42 Gourmet Avenue, Downtown<br>New York, NY 10001</div></div>
+        <div class="rrow"><div class="rlabel">Contact</div><div class="rval">+1 (212) 555-0182<br>hello@blumerestaurant.com</div></div>
+      </div>
+    </div>
+    <div class="reveal rd1">
+      <div class="form">
+        <div class="frow">
+          <div class="fg"><label>First Name</label><input type="text" placeholder="John"/></div>
+          <div class="fg"><label>Last Name</label><input type="text" placeholder="Doe"/></div>
+        </div>
+        <div class="frow">
+          <div class="fg"><label>Email</label><input type="email" placeholder="you@example.com"/></div>
+          <div class="fg"><label>Phone</label><input type="tel" placeholder="+1 (000) 000-0000"/></div>
+        </div>
+        <div class="frow">
+          <div class="fg"><label>Date</label><input type="date"/></div>
+          <div class="fg"><label>Time</label>
+            <select>
+              <option>Select Time</option>
+              <option>12:00 PM</option><option>1:00 PM</option>
+              <option>6:00 PM</option><option>7:00 PM</option>
+              <option>8:00 PM</option><option>9:00 PM</option>
+            </select>
+          </div>
+        </div>
+        <div class="fg"><label>Guests</label>
+          <select>
+            <option>Select Guests</option>
+            <option>1 Person</option><option>2 People</option>
+            <option>3–4 People</option><option>5–6 People</option>
+            <option>7–10 People</option>
+          </select>
+        </div>
+        <div class="fg"><label>Special Requests</label>
+          <textarea placeholder="Allergies, celebrations, seating preferences..."></textarea>
+        </div>
+        <button class="btn-dk" id="resbtn" onclick="submitRes()">Confirm Reservation</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="ftop">
+    <div class="fbrand">
+      <a href="#" class="logo">BLUME<span style="color:var(--w)">.</span></a>
+      <p>A place where extraordinary cuisine meets warm hospitality. Every visit to Blume is a celebration of flavor, craft, and connection.</p>
+      <div class="fsoc">
+        <a href="#" class="soc">Fb</a>
+        <a href="#" class="soc">Ig</a>
+        <a href="#" class="soc">Tw</a>
+        <a href="#" class="soc">Yt</a>
+      </div>
+    </div>
+    <div class="fcol">
+      <h5>Navigate</h5>
+      <ul>
+        <li><a href="#about">About Us</a></li>
+        <li><a href="#menu">Our Menu</a></li>
+        <li><a href="#gallery">Gallery</a></li>
+        <li><a href="#testi">Reviews</a></li>
+        <li><a href="#res">Reservations</a></li>
+      </ul>
+    </div>
+    <div class="fcol">
+      <h5>Experiences</h5>
+      <ul>
+        <li>Private Dining</li>
+        <li>Chef's Table</li>
+        <li>Wine Pairing</li>
+        <li>Cooking Classes</li>
+        <li>Event Catering</li>
+      </ul>
+    </div>
+    <div class="fcol">
+      <h5>Opening Hours</h5>
+      <ul>
+        <li>Mon – Fri: 12pm – 10pm</li>
+        <li>Saturday: 11am – 11pm</li>
+        <li>Sunday: 11am – 11pm</li>
+        <li style="color:var(--y);margin-top:6px">Closed on Holidays</li>
+      </ul>
+    </div>
+  </div>
+  <div class="fbot">
+    <p>© 2025 Blume Restaurant. All rights reserved.</p>
+    <span>CRAFTED WITH PASSION</span>
+  </div>
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script src="data.js"></script>
+<script src="script.js"></script>
+
+</body>
+</html>

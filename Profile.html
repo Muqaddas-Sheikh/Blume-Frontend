@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Blume — My Profile</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Bebas+Neue&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="style.css">
+<style>
+.order-card{background:var(--bs);padding:20px 24px;margin-bottom:10px;border-left:3px solid transparent;transition:border-color .3s}
+.order-card:hover{border-color:var(--y)}
+.order-card-top{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px;margin-bottom:12px}
+.order-num{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;color:var(--y);letter-spacing:.1em}
+.order-status{font-size:.68rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:5px 12px;border-radius:2px}
+.status-pending{background:rgba(245,200,0,.15);color:var(--y)}
+.status-confirmed{background:rgba(80,180,80,.15);color:#5db85d}
+.status-delivered{background:rgba(80,180,80,.2);color:#4caf50}
+.status-cancelled{background:rgba(255,80,80,.15);color:#ff5555}
+.order-card-items{font-size:.83rem;color:var(--gl);margin-bottom:10px;line-height:1.7}
+.order-card-foot{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;padding-top:10px;border-top:1px solid rgba(255,255,255,.06)}
+.order-date{font-size:.72rem;color:var(--g)}
+.order-total{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--y)}
+.orders-loading{text-align:center;padding:40px;color:var(--g);font-size:.83rem;letter-spacing:.15em;text-transform:uppercase}
+.orders-empty{text-align:center;padding:48px 20px;color:var(--g);line-height:1.8}
+</style>
+</head>
+<body>
+<nav id="nav" class="scrolled">
+  <a href="index.html" class="logo">BLUME<span>.</span></a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="index.html#menu">Menu</a></li>
+    <li><div class="nav-user-menu" style="display:flex"><a href="profile.html" class="nav-user-name">Guest</a><span class="nav-sep">|</span><a href="#" onclick="Auth.logout()">Logout</a></div></li>
+    <li><a href="order.html" class="nav-cart"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg><span class="cart-badge" style="display:none">0</span></a></li>
+  </ul>
+  <div class="mob-right">
+    <a href="order.html" class="mob-cart"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg><span class="cart-badge" style="display:none">0</span></a>
+    <button class="hamburger" id="hbg"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+
+<div class="mob-menu" id="mobMenu">
+  <ul>
+    <li><a href="index.html" onclick="cMob()">Home</a></li>
+    <li><a href="index.html#menu" onclick="cMob()">Menu</a></li>
+    <li><a href="order.html" onclick="cMob()">My Order</a></li>
+    <li><a href="#" onclick="Auth.logout()">Logout</a></li>
+  </ul>
+</div>
+<div class="mob-overlay" id="mobOverlay" onclick="cMob()"></div>
+
+<main class="profile-page">
+  <div class="profile-header">
+    <div class="profile-avatar" id="profileAvatar">J</div>
+    <div class="profile-header-info">
+      <h1 id="profileName">John Doe</h1>
+      <p id="profileEmail"></p>
+      <p id="profileJoined"></p>
+    </div>
+    <button class="btn-o profile-logout-btn" onclick="Auth.logout()">Logout</button>
+  </div>
+
+  <div class="profile-tabs">
+    <button class="ptab active" onclick="switchPTab('details',this)">My Details</button>
+    <button class="ptab" onclick="switchPTab('orders',this)">My Orders</button>
+    <button class="ptab" onclick="switchPTab('password',this)">Change Password</button>
+    <button class="ptab" onclick="switchPTab('fav',this)">Favourites</button>
+  </div>
+
+  <!-- MY DETAILS -->
+  <div class="ptab-content" id="ptab-details">
+    <div class="profile-form">
+      <div class="auth-row">
+        <div class="auth-field"><label>First Name</label><input type="text" id="p-fn"/></div>
+        <div class="auth-field"><label>Last Name</label><input type="text" id="p-ln"/></div>
+      </div>
+      <div class="auth-field"><label>Email Address</label><input type="email" id="p-email"/></div>
+      <div class="auth-field"><label>Phone Number</label><input type="tel" id="p-phone"/></div>
+      <div class="auth-field"><label>Delivery Address</label><input type="text" id="p-addr"/></div>
+      <div class="auth-err" id="p-err"></div>
+      <div class="auth-success" id="p-ok" style="display:none">Details updated successfully!</div>
+      <button class="btn-y auth-btn" id="p-btn" onclick="saveDetails()">Save Changes</button>
+    </div>
+  </div>
+
+  <!-- MY ORDERS -->
+  <div class="ptab-content" id="ptab-orders" style="display:none">
+    <div id="ordersContainer">
+      <div class="orders-loading">Loading your orders...</div>
+    </div>
+  </div>
+
+  <!-- CHANGE PASSWORD -->
+  <div class="ptab-content" id="ptab-password" style="display:none">
+    <div class="profile-form">
+      <div class="auth-field">
+        <label>Current Password</label>
+        <div class="pw-wrap">
+          <input type="password" id="cp-old" placeholder="Current password"/>
+          <button class="pw-toggle" onclick="togglePw('cp-old',this)">Show</button>
+        </div>
+      </div>
+      <div class="auth-field">
+        <label>New Password</label>
+        <div class="pw-wrap">
+          <input type="password" id="cp-new" placeholder="Min 6 characters"/>
+          <button class="pw-toggle" onclick="togglePw('cp-new',this)">Show</button>
+        </div>
+      </div>
+      <div class="auth-field">
+        <label>Confirm New Password</label>
+        <div class="pw-wrap">
+          <input type="password" id="cp-new2" placeholder="Repeat new password"/>
+          <button class="pw-toggle" onclick="togglePw('cp-new2',this)">Show</button>
+        </div>
+      </div>
+      <div class="auth-err" id="cp-err"></div>
+      <div class="auth-success" id="cp-ok" style="display:none">Password changed successfully!</div>
+      <button class="btn-y auth-btn" id="cp-btn" onclick="changePassword()">Change Password</button>
+    </div>
+  </div>
+
+  <!-- FAVOURITES -->
+  <div class="ptab-content" id="ptab-fav" style="display:none">
+    <div class="fav-empty">
+      <p>Your favourite dishes will appear here.</p>
+      <a href="index.html#menu" class="btn-y" style="margin-top:20px;display:inline-block">Explore Menu</a>
+    </div>
+  </div>
+</main>
+
+<div class="toast" id="toast"></div>
+<script src="data.js"></script>
+<script>
+
+if (!Auth.isLoggedIn()) window.location.href = 'auth.html';
+
+Cart.updateBadge();
+const user = Auth.get();
+
+document.getElementById('profileAvatar').textContent = (user.firstName || 'G')[0].toUpperCase();
+document.getElementById('profileName').textContent   = (user.firstName || '') + ' ' + (user.lastName || '');
+document.getElementById('profileEmail').textContent  = user.email || '';
+document.getElementById('profileEmail').style.cssText = 'color:var(--g);font-size:.88rem';
+
+if (user.createdAt || user.joined) {
+  const d = new Date(user.createdAt || user.joined);
+  const j = document.getElementById('profileJoined');
+  j.textContent   = 'Member since ' + d.toLocaleDateString('en-US', { year:'numeric', month:'long' });
+  j.style.cssText = 'color:var(--y);font-size:.75rem;letter-spacing:.1em;text-transform:uppercase;margin-top:4px';
+}
+
+document.querySelectorAll('.nav-user-name').forEach(el => el.textContent = user.firstName || 'Guest');
+
+document.getElementById('p-fn').value    = user.firstName || '';
+document.getElementById('p-ln').value    = user.lastName  || '';
+document.getElementById('p-email').value = user.email     || '';
+document.getElementById('p-phone').value = user.phone     || '';
+document.getElementById('p-addr').value  = user.address   || '';
+
+// ═══ TAB SWITCH ═══
+let ordersLoaded = false;
+function switchPTab(tab, btn) {
+  document.querySelectorAll('.ptab-content').forEach(el => el.style.display = 'none');
+  document.querySelectorAll('.ptab').forEach(el => el.classList.remove('active'));
+  document.getElementById('ptab-' + tab).style.display = 'block';
+  btn.classList.add('active');
+  // Orders tab open hone pe load karo
+  if (tab === 'orders' && !ordersLoaded) {
+    loadMyOrders();
+    ordersLoaded = true;
+  }
+}
+
+// ═══ LOAD MY ORDERS ═══
+async function loadMyOrders() {
+  const container = document.getElementById('ordersContainer');
+  container.innerHTML = '<div class="orders-loading">Loading your orders...</div>';
+
+  try {
+    const res = await fetch(`${API_BASE}/api/orders/my`, {
+      headers: {
+        'Authorization': 'Bearer ' + Auth.getToken()
+      }
+    });
+
+    const orders = await res.json();
+
+    if (!res.ok || !Array.isArray(orders) || orders.length === 0) {
+      container.innerHTML = `
+        <div class="orders-empty">
+          <p style="font-size:2.5rem;margin-bottom:16px">🍽</p>
+          <p>Aap ne abhi koi order nahi kiya.</p>
+          <a href="index.html#menu" class="btn-y" style="margin-top:20px;display:inline-block">Order Now</a>
+        </div>`;
+      return;
+    }
+
+    container.innerHTML = orders.map(o => {
+      const date = new Date(o.createdAt).toLocaleDateString('en-US', {
+        year:'numeric', month:'short', day:'numeric'
+      });
+
+      const itemsList = Array.isArray(o.items)
+        ? o.items.map(i => `${i.name || i.id} x${i.qty}`).join(', ')
+        : 'Items unavailable';
+
+      const statusClass = {
+        pending:   'status-pending',
+        confirmed: 'status-confirmed',
+        delivered: 'status-delivered',
+        cancelled: 'status-cancelled'
+      }[o.status] || 'status-pending';
+
+      const total = o.total ? '$' + Number(o.total).toFixed(2) : '';
+
+      return `
+      <div class="order-card">
+        <div class="order-card-top">
+          <div>
+            <div class="order-num">Order #${o.orderNumber || o._id?.slice(-6)?.toUpperCase() || 'N/A'}</div>
+            <div class="order-date">${date}</div>
+          </div>
+          <span class="order-status ${statusClass}">${o.status || 'Pending'}</span>
+        </div>
+        <div class="order-card-items">${itemsList}</div>
+        <div class="order-card-foot">
+          <span class="order-date">${o.orderType || 'Delivery'} • ${o.paymentMethod || 'Card'}</span>
+          ${total ? `<span class="order-total">${total}</span>` : ''}
+        </div>
+      </div>`;
+    }).join('');
+
+  } catch (err) {
+    console.error('Orders load error:', err);
+    container.innerHTML = `
+      <div class="orders-empty">
+        <p>Orders load nahi ho sake. Dobara try karo.</p>
+        <button class="btn-y" style="margin-top:16px" onclick="loadMyOrders()">Retry</button>
+      </div>`;
+  }
+}
+
+// ═══ SAVE DETAILS ═══
+async function saveDetails() {
+  const fn    = document.getElementById('p-fn').value.trim();
+  const ln    = document.getElementById('p-ln').value.trim();
+  const email = document.getElementById('p-email').value.trim();
+  const phone = document.getElementById('p-phone').value.trim();
+  const addr  = document.getElementById('p-addr').value.trim();
+
+  const errEl = document.getElementById('p-err');
+  const okEl  = document.getElementById('p-ok');
+  errEl.textContent  = '';
+  okEl.style.display = 'none';
+
+  if (!fn || !ln || !email) { errEl.textContent = 'Name and email are required.'; return; }
+
+  const btn = document.getElementById('p-btn');
+  btn.textContent = 'Saving...';
+  btn.disabled    = true;
+
+  try {
+    const res = await fetch(`${API_BASE}/api/auth/update`, {
+      method:  'PUT',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + Auth.getToken() },
+      body: JSON.stringify({ firstName: fn, lastName: ln, email, phone, address: addr })
+    });
+    const data = await res.json();
+    if (!res.ok) { errEl.textContent = data.error || 'Could not update.'; btn.textContent = 'Save Changes'; btn.disabled = false; return; }
+    Auth.save(data, Auth.getToken());
+    document.getElementById('profileName').textContent = fn + ' ' + ln;
+    document.getElementById('profileAvatar').textContent = fn[0].toUpperCase();
+    document.querySelectorAll('.nav-user-name').forEach(el => el.textContent = fn);
+    okEl.style.display = 'block';
+    btn.textContent    = 'Save Changes';
+    btn.disabled       = false;
+  } catch (err) {
+    errEl.textContent = 'Could not connect to server.';
+    btn.textContent   = 'Save Changes';
+    btn.disabled      = false;
+  }
+}
+
+// ═══ CHANGE PASSWORD ═══
+async function changePassword() {
+  const oldPw  = document.getElementById('cp-old').value;
+  const newPw  = document.getElementById('cp-new').value;
+  const newPw2 = document.getElementById('cp-new2').value;
+  const errEl  = document.getElementById('cp-err');
+  const okEl   = document.getElementById('cp-ok');
+  errEl.textContent  = '';
+  okEl.style.display = 'none';
+  if (!oldPw || !newPw || !newPw2)    { errEl.textContent = 'Please fill in all fields.'; return; }
+  if (newPw.length < 6)               { errEl.textContent = 'New password must be at least 6 characters.'; return; }
+  if (newPw !== newPw2)               { errEl.textContent = 'New passwords do not match.'; return; }
+  const btn = document.getElementById('cp-btn');
+  btn.textContent = 'Changing...';
+  btn.disabled    = true;
+  try {
+    const res = await fetch(`${API_BASE}/api/auth/password`, {
+      method:  'PUT',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + Auth.getToken() },
+      body: JSON.stringify({ currentPassword: oldPw, newPassword: newPw })
+    });
+    const data = await res.json();
+    if (!res.ok) { errEl.textContent = data.error || 'Could not change password.'; btn.textContent = 'Change Password'; btn.disabled = false; return; }
+    okEl.style.display = 'block';
+    btn.textContent    = 'Change Password';
+    btn.disabled       = false;
+    document.getElementById('cp-old').value  = '';
+    document.getElementById('cp-new').value  = '';
+    document.getElementById('cp-new2').value = '';
+  } catch (err) {
+    errEl.textContent = 'Could not connect to server.';
+    btn.textContent   = 'Change Password';
+    btn.disabled      = false;
+  }
+}
+
+function togglePw(id, btn) {
+  const el = document.getElementById(id);
+  el.type  = el.type === 'password' ? 'text' : 'password';
+  btn.textContent = el.type === 'password' ? 'Show' : 'Hide';
+}
+
+window.addEventListener('scroll', () =>
+  document.getElementById('nav').classList.toggle('scrolled', scrollY > 60)
+);
+const hbg = document.getElementById('hbg');
+const mob = document.getElementById('mobMenu');
+const overlay = document.getElementById('mobOverlay');
+hbg.addEventListener('click', () => {
+  hbg.classList.toggle('open');
+  mob.classList.toggle('open');
+  overlay.classList.toggle('open');
+});
+function cMob() {
+  hbg.classList.remove('open');
+  mob.classList.remove('open');
+  overlay.classList.remove('open');
+}
+</script>
+</body>
+</html>

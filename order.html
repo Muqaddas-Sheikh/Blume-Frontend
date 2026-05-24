@@ -1,0 +1,415 @@
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Blume — My Order</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Bebas+Neue&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="style.css">
+<style>
+#cartItems .cart-item { opacity: 0; animation: fadeUp .4s ease forwards; }
+#cartItems .cart-item:nth-child(1){animation-delay:.05s}
+#cartItems .cart-item:nth-child(2){animation-delay:.1s}
+#cartItems .cart-item:nth-child(3){animation-delay:.15s}
+#cartItems .cart-item:nth-child(4){animation-delay:.2s}
+.cart-loading{text-align:center;padding:48px 20px;color:var(--g);font-size:.83rem;letter-spacing:.15em;text-transform:uppercase}
+</style>
+</head>
+<body>
+
+<nav id="nav" class="scrolled">
+  <a href="index.html" class="logo">BLUME<span>.</span></a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="index.html#menu">Menu</a></li>
+    <li><a href="auth.html" class="nav-auth-link">Sign In</a></li>
+    <li>
+      <div class="nav-user-menu" style="display:none">
+        <a href="profile.html" class="nav-user-name">Guest</a>
+        <span class="nav-sep">|</span>
+        <a href="#" onclick="Auth.logout()">Logout</a>
+      </div>
+    </li>
+    <li>
+      <a href="order.html" class="nav-cart">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+        <span class="cart-badge" style="display:none">0</span>
+      </a>
+    </li>
+    <li><a href="index.html#res" class="nav-cta">Reserve Table</a></li>
+  </ul>
+  <div class="mob-right">
+    <a href="order.html" class="mob-cart">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+      <span class="cart-badge" style="display:none">0</span>
+    </a>
+    <a href="index.html#res" class="mob-reserve-btn">Reserve</a>
+    <button class="hamburger" id="hbg"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+
+<div class="mob-menu" id="mobMenu">
+  <ul>
+    <li><a href="index.html" onclick="cMob()">Home</a></li>
+    <li><a href="index.html#menu" onclick="cMob()">Menu</a></li>
+    <li><a href="index.html#res" onclick="cMob()">Reserve</a></li>
+    <li id="mob-auth-link"><a href="auth.html" onclick="cMob()">Sign In</a></li>
+    <li id="mob-profile-link" style="display:none"><a href="profile.html" onclick="cMob()">My Profile</a></li>
+  </ul>
+</div>
+<div class="mob-overlay" id="mobOverlay" onclick="cMob()"></div>
+
+<main class="order-page">
+  <div class="order-header">
+    <div class="slabel"><span>Your Selection</span></div>
+    <h1>My <em>Order</em></h1>
+  </div>
+
+  <!-- Loading state -->
+  <div id="pageLoading" class="cart-loading">Loading your cart...</div>
+
+  <div class="order-layout" id="orderLayout" style="display:none">
+    <div class="order-left">
+      <div id="cartItems"></div>
+      <a href="index.html#menu" class="add-more-btn">+ Add More Items</a>
+    </div>
+
+    <div class="order-right">
+      <div class="order-summary">
+        <h3 class="summary-title">Order Summary</h3>
+        <div class="summary-rows" id="summaryRows"></div>
+        <div class="summary-divider"></div>
+        <div class="summary-tax-row"><span>Tax (8%)</span><span id="taxAmt">$0.00</span></div>
+        <div class="summary-total-row"><span>Total</span><span id="totalAmt">$0.00</span></div>
+      </div>
+
+      <div class="checkout-form" id="checkoutForm">
+        <h3 class="summary-title">Delivery Details</h3>
+        <div class="fg"><label>Full Name</label><input type="text" id="co-name" placeholder="John Doe"/></div>
+        <div class="fg"><label>Phone</label><input type="tel" id="co-phone" placeholder="+92 300 0000000"/></div>
+        <div class="fg"><label>Email</label><input type="email" id="co-email" placeholder="you@example.com"/></div>
+        <div class="fg"><label>Delivery Address</label><input type="text" id="co-addr" placeholder="Street, City"/></div>
+        <div class="fg"><label>City</label><input type="text" id="co-city" placeholder="Karachi"/></div>
+        <div class="fg"><label>Order Type</label>
+          <select id="co-type">
+            <option value="delivery">Home Delivery</option>
+            <option value="pickup">Restaurant Pickup</option>
+            <option value="dine">Dine In</option>
+          </select>
+        </div>
+        <div class="fg"><label>Special Instructions</label>
+          <textarea id="co-notes" placeholder="Allergies, preferences, table number..."></textarea>
+        </div>
+
+        <h3 class="summary-title" style="margin-top:24px">Payment</h3>
+        <div class="pay-options">
+          <label class="pay-opt active-pay" id="pay-card-lbl">
+            <input type="radio" name="pay" value="card" checked onchange="togglePay(this)"/>
+            <span>💳 Credit / Debit Card</span>
+          </label>
+          <label class="pay-opt" id="pay-cash-lbl">
+            <input type="radio" name="pay" value="cash" onchange="togglePay(this)"/>
+            <span>💵 Cash on Delivery</span>
+          </label>
+        </div>
+
+        <!-- Card fields — sirf card select pe dikhenge -->
+        <div id="cardFields">
+          <div class="fg"><label>Card Number</label>
+            <input type="text" placeholder="1234 5678 9012 3456" maxlength="19" oninput="fmtCard(this)"/>
+          </div>
+          <div class="frow">
+            <div class="fg"><label>Expiry</label><input type="text" placeholder="MM/YY" maxlength="5"/></div>
+            <div class="fg"><label>CVV</label><input type="text" placeholder="123" maxlength="3"/></div>
+          </div>
+        </div>
+
+        <!-- Cash on delivery message -->
+        <div id="cashMsg" style="display:none;background:rgba(245,200,0,.08);border:1px solid rgba(245,200,0,.2);padding:14px 16px;font-size:.83rem;color:var(--gl);line-height:1.6;margin-top:4px">
+          💵 Cash on Delivery — aap delivery ke waqt payment karein ge.
+        </div>
+
+        <button class="btn-dk order-submit-btn" id="placeBtn" onclick="placeOrder()">Place Order</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="empty-cart" id="emptyCart" style="display:none">
+    <div class="empty-icon">🍽</div>
+    <h2>Your order is empty</h2>
+    <p>Add some dishes from our menu to get started.</p>
+    <a href="index.html#menu" class="btn-y">Browse Menu</a>
+  </div>
+
+  <div class="order-success" id="orderSuccess" style="display:none">
+    <div class="success-icon">✓</div>
+    <h2>Order Placed!</h2>
+    <p>Thank you! Your order has been received.<br>Estimated delivery: <strong>35–45 minutes</strong></p>
+    <div class="success-id">Order #<span id="orderId"></span></div>
+    <a href="index.html" class="btn-y" style="margin-top:28px">Back to Home</a>
+  </div>
+</main>
+
+<script src="data.js"></script>
+<script>
+
+
+
+let menuCache = [];
+
+// ✅ FIX 1: Pehle menuCache load karo, phir cart render karo
+async function loadMenuCache() {
+  try {
+    const res = await fetch(`${API_BASE}/api/menu`);
+    if (!res.ok) throw new Error('Menu fetch failed');
+    menuCache = await res.json();
+  } catch (err) {
+    console.log('Menu cache error:', err);
+    menuCache = [];
+  }
+}
+
+function renderCart() {
+  const cart      = Cart.get();
+  const cartEl    = document.getElementById('cartItems');
+  const emptyEl   = document.getElementById('emptyCart');
+  const layoutEl  = document.getElementById('orderLayout');
+  const successEl = document.getElementById('orderSuccess');
+  const loadingEl = document.getElementById('pageLoading');
+
+  // Loading hide karo
+  if (loadingEl) loadingEl.style.display = 'none';
+
+  if (cart.length === 0) {
+    layoutEl.style.display  = 'none';
+    emptyEl.style.display   = 'flex';
+    successEl.style.display = 'none';
+    return;
+  }
+
+  layoutEl.style.display  = 'grid';
+  emptyEl.style.display   = 'none';
+
+  cartEl.innerHTML = cart.map(ci => {
+    const m = menuCache.find(x => x._id === ci.id);
+    if (!m) return `
+      <div class="cart-item">
+        <div class="cart-item-info" style="padding:16px 20px">
+          <p style="color:var(--g);font-size:.82rem">Item not found (id: ${ci.id})</p>
+        </div>
+      </div>`;
+    return `
+    <div class="cart-item" id="ci-${ci.id}">
+      <img src="${m.img}" alt="${m.name}" class="cart-item-img"
+           onclick="window.location='Item.html?id=${m._id}'" style="cursor:pointer"/>
+      <div class="cart-item-info">
+        <div class="mcard-tag">${m.tag || ''}</div>
+        <h3>${m.name}</h3>
+        <p>${(m.desc || '').substring(0,80)}...</p>
+        <div class="cart-item-foot">
+          <div class="cart-qty">
+            <button onclick="updateQty('${ci.id}',-1)">−</button>
+            <span id="qty-${ci.id}">${ci.qty}</span>
+            <button onclick="updateQty('${ci.id}',1)">+</button>
+          </div>
+          <div class="cart-item-price" id="price-${ci.id}">$${(m.price * ci.qty).toFixed(2)}</div>
+          <button class="cart-remove" onclick="removeItem('${ci.id}')">✕</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+
+  renderSummary(cart);
+  Cart.updateBadge();
+}
+
+function renderSummary(cart) {
+  const rows = cart.map(ci => {
+    const m = menuCache.find(x => x._id === ci.id);
+    if (!m) return '';
+    return `<div class="summary-row">
+      <span>${m.name} x ${ci.qty}</span>
+      <span>$${(m.price * ci.qty).toFixed(2)}</span>
+    </div>`;
+  }).join('');
+
+  document.getElementById('summaryRows').innerHTML = rows;
+
+  const sub = cart.reduce((s, ci) => {
+    const m = menuCache.find(x => x._id === ci.id);
+    return s + (m ? m.price * ci.qty : 0);
+  }, 0);
+
+  const tax   = sub * 0.08;
+  const total = sub + tax;
+  document.getElementById('taxAmt').textContent   = '$' + tax.toFixed(2);
+  document.getElementById('totalAmt').textContent = '$' + total.toFixed(2);
+}
+
+function updateQty(id, delta) {
+  const cart = Cart.get();
+  const ci   = cart.find(x => x.id === id);
+  if (!ci) return;
+  Cart.update(id, ci.qty + delta);
+  renderCart();
+}
+
+function removeItem(id) {
+  Cart.remove(id);
+  renderCart();
+}
+
+// ✅ FIX 2: Cash on Delivery sahi kaam kare
+function togglePay(radio) {
+  const cardFields = document.getElementById('cardFields');
+  const cashMsg    = document.getElementById('cashMsg');
+  const cardLbl    = document.getElementById('pay-card-lbl');
+  const cashLbl    = document.getElementById('pay-cash-lbl');
+
+  // Dono labels se active hataao
+  cardLbl.classList.remove('active-pay');
+  cashLbl.classList.remove('active-pay');
+
+  if (radio.value === 'card') {
+    cardFields.style.display = 'flex';
+    cashMsg.style.display    = 'none';
+    cardLbl.classList.add('active-pay');
+  } else {
+    cardFields.style.display = 'none';
+    cashMsg.style.display    = 'block';
+    cashLbl.classList.add('active-pay');
+  }
+}
+
+function fmtCard(el) {
+  let v = el.value.replace(/\D/g,'').substring(0,16);
+  el.value = v.replace(/(.{4})/g,'$1 ').trim();
+}
+
+async function placeOrder() {
+  const name  = document.getElementById('co-name').value.trim();
+  const phone = document.getElementById('co-phone').value.trim();
+  const email = document.getElementById('co-email').value.trim();
+  const addr  = document.getElementById('co-addr').value.trim();
+  const city  = document.getElementById('co-city').value.trim();
+  const type  = document.getElementById('co-type').value;
+  const notes = document.getElementById('co-notes').value;
+  const pay   = document.querySelector('input[name="pay"]:checked').value;
+
+  if (!name || !phone || !email || !addr) {
+    alert('Please fill in all delivery details.');
+    return;
+  }
+  if (Cart.count() === 0) {
+    alert('Your cart is empty!');
+    return;
+  }
+
+  const btn = document.getElementById('placeBtn');
+  btn.textContent = 'Placing Order...';
+  btn.disabled    = true;
+
+  try {
+    const cartItems = Cart.get();
+
+    // Items mein name bhi bhejo
+    const itemsWithNames = cartItems.map(ci => {
+      const m = menuCache.find(x => x._id === ci.id);
+      return { id: ci.id, qty: ci.qty, name: m ? m.name : ci.id, price: m ? m.price : 0 };
+    });
+
+    const sub   = cartItems.reduce((s,ci) => { const m = menuCache.find(x=>x._id===ci.id); return s+(m?m.price*ci.qty:0);},0);
+    const total = (sub * 1.08).toFixed(2);
+
+    const res = await fetch(`${API_BASE}/api/orders`, {
+      method:  'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(Auth.getToken() && { 'Authorization': 'Bearer ' + Auth.getToken() })
+      },
+      body: JSON.stringify({
+        customerName:  name,
+        phone, email,
+        address:       addr,
+        city, orderType: type, notes,
+        paymentMethod: pay,
+        items:         itemsWithNames,
+        total
+      })
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      alert('Order failed: ' + (data.error || 'Unknown error'));
+      btn.textContent = 'Place Order';
+      btn.disabled    = false;
+      return;
+    }
+
+    document.getElementById('orderId').textContent = data.orderNumber || '';
+    document.getElementById('orderLayout').style.display  = 'none';
+    document.getElementById('orderSuccess').style.display = 'flex';
+    Cart.clear();
+    Cart.updateBadge();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  } catch (err) {
+    console.error('Order error:', err);
+    alert('Could not connect to server. Please try again.');
+    btn.textContent = 'Place Order';
+    btn.disabled    = false;
+  }
+}
+
+// ✅ FIX 3: Pehle menu load karo, phir cart dikhao
+window.addEventListener('DOMContentLoaded', async () => {
+  Auth.updateNav();
+  Cart.updateBadge();
+
+  // Pehle menu load karo
+  await loadMenuCache();
+
+  // Phir cart render karo
+  renderCart();
+
+  // User details pre-fill
+  const user = Auth.get();
+  if (user) {
+    const nm = document.getElementById('co-name');
+    const ph = document.getElementById('co-phone');
+    const em = document.getElementById('co-email');
+    const ad = document.getElementById('co-addr');
+    if (nm) nm.value = ((user.firstName||'')+' '+(user.lastName||'')).trim();
+    if (ph) ph.value = user.phone   || '';
+    if (em) em.value = user.email   || '';
+    if (ad) ad.value = user.address || '';
+
+    const al = document.getElementById('mob-auth-link');
+    const pl = document.getElementById('mob-profile-link');
+    if (al) al.style.display = 'none';
+    if (pl) pl.style.display = '';
+  }
+});
+
+window.addEventListener('scroll', () =>
+  document.getElementById('nav').classList.toggle('scrolled', scrollY > 60)
+);
+
+const hbg     = document.getElementById('hbg');
+const mob     = document.getElementById('mobMenu');
+const overlay = document.getElementById('mobOverlay');
+
+hbg.addEventListener('click', () => {
+  hbg.classList.toggle('open');
+  mob.classList.toggle('open');
+  overlay.classList.toggle('open');
+});
+
+function cMob() {
+  hbg.classList.remove('open');
+  mob.classList.remove('open');
+  overlay.classList.remove('open');
+}
+</script>
+</body>
+</html>

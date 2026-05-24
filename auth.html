@@ -1,0 +1,231 @@
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Blume — Sign In / Sign Up</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Bebas+Neue&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="style.css">
+</head>
+<body class="auth-body">
+
+<nav id="nav" class="scrolled">
+  <a href="index.html" class="logo">BLUME<span>.</span></a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="index.html#menu">Menu</a></li>
+    <li>
+      <a href="order.html" class="nav-cart">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+        <span class="cart-badge" style="display:none">0</span>
+      </a>
+    </li>
+  </ul>
+  <div class="mob-right">
+    <a href="order.html" class="mob-cart">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+      <span class="cart-badge" style="display:none">0</span>
+    </a>
+  </div>
+</nav>
+
+<main class="auth-page">
+  <div class="auth-bg"></div>
+  <div class="auth-card">
+    <a href="index.html" class="logo" style="display:block;text-align:center;margin-bottom:28px;font-size:2.2rem">BLUME<span>.</span></a>
+
+    <div class="auth-tabs">
+      <button class="auth-tab active" id="tab-in" onclick="switchTab('in')">Sign In</button>
+      <button class="auth-tab" id="tab-up" onclick="switchTab('up')">Sign Up</button>
+    </div>
+
+    <!-- SIGN IN -->
+    <div id="form-in">
+      <div class="auth-field">
+        <label>Email Address</label>
+        <input type="email" id="si-email" placeholder="you@example.com"/>
+      </div>
+      <div class="auth-field">
+        <label>Password</label>
+        <div class="pw-wrap">
+          <input type="password" id="si-pw" placeholder="Your password"/>
+          <button class="pw-toggle" onclick="togglePw('si-pw',this)">Show</button>
+        </div>
+      </div>
+      <div class="auth-err" id="si-err"></div>
+      <button class="btn-y auth-btn" id="si-btn" onclick="signIn()">Sign In</button>
+      <p class="auth-switch">Don't have an account?
+        <a href="#" onclick="switchTab('up');return false;">Create one</a>
+      </p>
+    </div>
+
+    <!-- SIGN UP -->
+    <div id="form-up" style="display:none">
+      <div class="auth-row">
+        <div class="auth-field">
+          <label>First Name</label>
+          <input type="text" id="su-fn" placeholder="John"/>
+        </div>
+        <div class="auth-field">
+          <label>Last Name</label>
+          <input type="text" id="su-ln" placeholder="Doe"/>
+        </div>
+      </div>
+      <div class="auth-field">
+        <label>Email Address</label>
+        <input type="email" id="su-email" placeholder="you@example.com"/>
+      </div>
+      <div class="auth-field">
+        <label>Phone Number</label>
+        <input type="tel" id="su-phone" placeholder="+1 (000) 000-0000"/>
+      </div>
+      <div class="auth-field">
+        <label>Delivery Address</label>
+        <input type="text" id="su-addr" placeholder="42 Gourmet Ave, New York"/>
+      </div>
+      <div class="auth-field">
+        <label>Password</label>
+        <div class="pw-wrap">
+          <input type="password" id="su-pw" placeholder="Min 6 characters"/>
+          <button class="pw-toggle" onclick="togglePw('su-pw',this)">Show</button>
+        </div>
+      </div>
+      <div class="auth-field">
+        <label>Confirm Password</label>
+        <div class="pw-wrap">
+          <input type="password" id="su-pw2" placeholder="Repeat password"/>
+          <button class="pw-toggle" onclick="togglePw('su-pw2',this)">Show</button>
+        </div>
+      </div>
+      <div class="auth-err" id="su-err"></div>
+      <button class="btn-y auth-btn" id="su-btn" onclick="signUp()">Create Account</button>
+      <p class="auth-switch">Already have an account?
+        <a href="#" onclick="switchTab('in');return false;">Sign in</a>
+      </p>
+    </div>
+  </div>
+</main>
+
+<script src="data.js"></script>
+<script>
+
+// ✅ FIXED: Nayi deployed URL
+const API_URL = "https://blume-backend--smuqaddas763.replit.app";
+
+if (Auth.isLoggedIn()) window.location.href = 'profile.html';
+
+Cart.updateBadge();
+
+function switchTab(tab) {
+  document.getElementById('form-in').style.display = tab === 'in' ? 'block' : 'none';
+  document.getElementById('form-up').style.display = tab === 'up' ? 'block' : 'none';
+  document.getElementById('tab-in').classList.toggle('active', tab === 'in');
+  document.getElementById('tab-up').classList.toggle('active', tab === 'up');
+  clearErrors();
+}
+
+function clearErrors() {
+  document.getElementById('si-err').textContent = '';
+  document.getElementById('su-err').textContent = '';
+}
+
+function showErr(id, msg) {
+  document.getElementById(id).textContent = msg;
+}
+
+function togglePw(inputId, btn) {
+  const inp = document.getElementById(inputId);
+  inp.type = inp.type === 'password' ? 'text' : 'password';
+  btn.textContent = inp.type === 'password' ? 'Show' : 'Hide';
+}
+
+// ── SIGN IN ──
+async function signIn() {
+  const email = document.getElementById('si-email').value.trim();
+  const pw    = document.getElementById('si-pw').value;
+  clearErrors();
+  if (!email || !pw) { showErr('si-err', 'Please enter email and password.'); return; }
+
+  const btn = document.getElementById('si-btn');
+  btn.textContent = 'Signing In...';
+  btn.disabled    = true;
+
+  try {
+    const res  = await fetch(`${API_URL}/api/auth/login`, {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ email, password: pw })
+    });
+    const data = await res.json();
+
+    if (!res.ok) {
+      showErr('si-err', data.error || 'Incorrect email or password.');
+      btn.textContent = 'Sign In';
+      btn.disabled    = false;
+      return;
+    }
+
+    // ✅ Token aur user dono save karo
+    Auth.save(data.user, data.token);
+    window.location.href = 'profile.html';
+
+  } catch (err) {
+    showErr('si-err', 'Server se connect nahi ho saka.');
+    btn.textContent = 'Sign In';
+    btn.disabled    = false;
+  }
+}
+
+// ── SIGN UP ──
+async function signUp() {
+  const fn    = document.getElementById('su-fn').value.trim();
+  const ln    = document.getElementById('su-ln').value.trim();
+  const email = document.getElementById('su-email').value.trim();
+  const phone = document.getElementById('su-phone').value.trim();
+  const addr  = document.getElementById('su-addr').value.trim();
+  const pw    = document.getElementById('su-pw').value;
+  const pw2   = document.getElementById('su-pw2').value;
+  clearErrors();
+
+  if (!fn || !ln || !email || !phone || !pw) { showErr('su-err', 'Please fill in all fields.'); return; }
+  if (pw.length < 6)  { showErr('su-err', 'Password must be at least 6 characters.'); return; }
+  if (pw !== pw2)     { showErr('su-err', 'Passwords do not match.'); return; }
+
+  const btn = document.getElementById('su-btn');
+  btn.textContent = 'Creating Account...';
+  btn.disabled    = true;
+
+  try {
+    const res  = await fetch(`${API_URL}/api/auth/register`, {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ firstName: fn, lastName: ln, email, phone, address: addr, password: pw })
+    });
+    const data = await res.json();
+
+    if (!res.ok) {
+      showErr('su-err', data.error || 'Registration failed.');
+      btn.textContent = 'Create Account';
+      btn.disabled    = false;
+      return;
+    }
+
+    // ✅ Token aur user dono save karo
+    Auth.save(data.user, data.token);
+    window.location.href = 'profile.html';
+
+  } catch (err) {
+    showErr('su-err', 'Server se connect nahi ho saka.');
+    btn.textContent = 'Create Account';
+    btn.disabled    = false;
+  }
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key !== 'Enter') return;
+  const tabIn = document.getElementById('form-in').style.display !== 'none';
+  if (tabIn) signIn(); else signUp();
+});
+
+</script>
+</body>
+</html>
