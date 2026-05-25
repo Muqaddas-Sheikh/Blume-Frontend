@@ -24,7 +24,7 @@
     <li><a href="auth.html" class="nav-auth-link">Sign In</a></li>
     <li>
       <div class="nav-user-menu" style="display:none">
-        <a href="profile.html" class="nav-user-name">Guest</a>
+        <a href="Profile.html" class="nav-user-name">Guest</a>
         <span class="nav-sep">|</span>
         <a href="#" onclick="Auth.logout()">Logout</a>
       </div>
@@ -53,7 +53,7 @@
     <li><a href="index.html#menu" onclick="cMob()">Menu</a></li>
     <li><a href="index.html#res" onclick="cMob()">Reserve</a></li>
     <li id="mob-auth-link"><a href="auth.html" onclick="cMob()">Sign In</a></li>
-    <li id="mob-profile-link" style="display:none"><a href="profile.html" onclick="cMob()">My Profile</a></li>
+    <li id="mob-profile-link" style="display:none"><a href="Profile.html" onclick="cMob()">My Profile</a></li>
   </ul>
 </div>
 <div class="mob-overlay" id="mobOverlay" onclick="cMob()"></div>
@@ -64,7 +64,6 @@
     <h1>My <em>Order</em></h1>
   </div>
 
-  <!-- Loading state -->
   <div id="pageLoading" class="cart-loading">Loading your cart...</div>
 
   <div class="order-layout" id="orderLayout" style="display:none">
@@ -112,7 +111,6 @@
           </label>
         </div>
 
-        <!-- Card fields — sirf card select pe dikhenge -->
         <div id="cardFields">
           <div class="fg"><label>Card Number</label>
             <input type="text" placeholder="1234 5678 9012 3456" maxlength="19" oninput="fmtCard(this)"/>
@@ -123,7 +121,6 @@
           </div>
         </div>
 
-        <!-- Cash on delivery message -->
         <div id="cashMsg" style="display:none;background:rgba(245,200,0,.08);border:1px solid rgba(245,200,0,.2);padding:14px 16px;font-size:.83rem;color:var(--gl);line-height:1.6;margin-top:4px">
           💵 Cash on Delivery — aap delivery ke waqt payment karein ge.
         </div>
@@ -152,11 +149,8 @@
 <script src="data.js"></script>
 <script>
 
-
-
 let menuCache = [];
 
-// ✅ FIX 1: Pehle menuCache load karo, phir cart render karo
 async function loadMenuCache() {
   try {
     const res = await fetch(`${API_BASE}/api/menu`);
@@ -176,7 +170,6 @@ function renderCart() {
   const successEl = document.getElementById('orderSuccess');
   const loadingEl = document.getElementById('pageLoading');
 
-  // Loading hide karo
   if (loadingEl) loadingEl.style.display = 'none';
 
   if (cart.length === 0) {
@@ -258,14 +251,12 @@ function removeItem(id) {
   renderCart();
 }
 
-// ✅ FIX 2: Cash on Delivery sahi kaam kare
 function togglePay(radio) {
   const cardFields = document.getElementById('cardFields');
   const cashMsg    = document.getElementById('cashMsg');
   const cardLbl    = document.getElementById('pay-card-lbl');
   const cashLbl    = document.getElementById('pay-cash-lbl');
 
-  // Dono labels se active hataao
   cardLbl.classList.remove('active-pay');
   cashLbl.classList.remove('active-pay');
 
@@ -311,7 +302,6 @@ async function placeOrder() {
   try {
     const cartItems = Cart.get();
 
-    // Items mein name bhi bhejo
     const itemsWithNames = cartItems.map(ci => {
       const m = menuCache.find(x => x._id === ci.id);
       return { id: ci.id, qty: ci.qty, name: m ? m.name : ci.id, price: m ? m.price : 0 };
@@ -361,18 +351,13 @@ async function placeOrder() {
   }
 }
 
-// ✅ FIX 3: Pehle menu load karo, phir cart dikhao
 window.addEventListener('DOMContentLoaded', async () => {
   Auth.updateNav();
   Cart.updateBadge();
 
-  // Pehle menu load karo
   await loadMenuCache();
-
-  // Phir cart render karo
   renderCart();
 
-  // User details pre-fill
   const user = Auth.get();
   if (user) {
     const nm = document.getElementById('co-name');
