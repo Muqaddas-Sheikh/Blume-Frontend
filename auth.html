@@ -111,7 +111,7 @@
 // ✅ FIXED: Nayi deployed URL
 const API_URL = "https://blume-backend--smuqaddas763.replit.app";
 
-if (Auth.isLoggedIn()) window.location.href = 'profile.html';
+if (Auth.isLoggedIn()) window.location.href = 'Profile.html';
 
 Cart.updateBadge();
 
@@ -166,7 +166,7 @@ async function signIn() {
 
     // ✅ Token aur user dono save karo
     Auth.save(data.user, data.token);
-    window.location.href = 'profile.html';
+    window.location.href = 'Profile.html';
 
   } catch (err) {
     showErr('si-err', 'Server se connect nahi ho saka.');
@@ -211,7 +211,7 @@ async function signUp() {
 
     // ✅ Token aur user dono save karo
     Auth.save(data.user, data.token);
-    window.location.href = 'profile.html';
+    window.location.href = 'Profile.html';
 
   } catch (err) {
     showErr('su-err', 'Server se connect nahi ho saka.');
